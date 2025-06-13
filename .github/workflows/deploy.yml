@@ -20,35 +20,39 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu/TrabalhoFinal/
+            cd /home/ubuntu
 
-            # Corrige permissões do diretório
-            chmod 755 /home/ubuntu/TrabalhoFinal/
+            # Clona o repositório se a pasta TrabalhoFinal não existir
+            if [ ! -d TrabalhoFinal ]; then
+              git clone git@github.com:seu-usuario/seu-repo.git TrabalhoFinal
+            fi
 
-            # Marca o repositório como seguro
+            cd TrabalhoFinal
+
+            # Marca o repo como seguro para o git (evita erro)
             git config --global --add safe.directory /home/ubuntu/TrabalhoFinal
 
-            # Puxa alterações
+            # Puxa as últimas mudanças
             git pull
 
-            # Cria o .env com base no secret
+            # Cria o arquivo .env baseado no secret do GitHub
             echo "${{ secrets.LARAVEL_ENV }}" | tee .env > /dev/null
 
-            # Desliga os containers
+            # Para os containers (se estiverem rodando)
             docker compose down
 
-            # Sobe os containers com build
+            # Sobe os containers com build e dettach
             docker compose up -d --build
 
-            # Aguarda o banco subir
+            # Espera o banco subir
             sleep 15
 
-            # Comandos Laravel
+            # Roda os comandos Laravel
             docker compose exec app php artisan migrate --force
             docker compose exec app php artisan optimize:clear
             docker compose exec app php artisan config:cache
             docker compose exec app php artisan route:cache
             docker compose exec app php artisan view:cache
 
-            # Corrige permissões finais
+            # Ajusta permissões
             docker compose exec app chown -R www-data:www-data storage bootstrap/cache
