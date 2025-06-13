@@ -26,7 +26,6 @@
                     border: 2px solid #ffffff;
                     transition: all 0.3s ease;
                 }
-
                 .custom-transparent-btn:hover {
                     background-color: #ffffff;
                     color: #1e3c72;
