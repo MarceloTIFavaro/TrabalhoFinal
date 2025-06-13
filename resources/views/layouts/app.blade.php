@@ -4,15 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     
-    <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     
     <title>{{ $__pageTitle ?? 'Gestão de Equipamentos' }}</title>
     
-    <!-- Favicon -->
     <link rel="icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon" />
     
-    <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net" />
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet" />
     
