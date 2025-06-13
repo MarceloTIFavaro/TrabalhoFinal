@@ -10,6 +10,8 @@ services:
     volumes:
       - ./:/var/www/html
       - ./Docker/app/000-default.conf:/etc/apache2/sites-available/000-default.conf
+    env_file:
+      - .env
     networks:
       - laravel
     depends_on:
@@ -20,6 +22,8 @@ services:
     image: mysql:8.0
     container_name: laravel_db
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
       MYSQL_DATABASE: ${DB_DATABASE}
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
