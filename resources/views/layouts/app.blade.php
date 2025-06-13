@@ -34,7 +34,7 @@
                         {{-- Aqui pode adicionar links fixos se quiser --}}
                     </ul>
                     
-                    <!-- Right Side Of Navbar -->
+                   
                     <ul class="navbar-nav ms-auto align-items-center">
                         @guest
                             @if (Route::has('login'))
