@@ -21,28 +21,34 @@ jobs:
           port: 22
           script: |
             cd /home/ubuntu/TrabalhoFinal/
-            
-            # Garante que estamos com a última versão do repositório
+
+            # Corrige permissões do diretório
+            chmod 755 /home/ubuntu/TrabalhoFinal/
+
+            # Marca o repositório como seguro
+            git config --global --add safe.directory /home/ubuntu/TrabalhoFinal
+
+            # Puxa alterações
             git pull
 
-            # Cria o arquivo .env com base no secret do GitHub
-            echo "${{ secrets.LARAVEL_ENV }}" > .env
+            # Cria o .env com base no secret
+            echo "${{ secrets.LARAVEL_ENV }}" | tee .env > /dev/null
 
-            # Se quiser usar o .env.example, pode ser assim também:
-            # cp .env.example .env
-            
-            # Para os containers se estiverem rodando
+            # Desliga os containers
             docker compose down
 
-            # Sobe os containers com build e já usando o novo .env
+            # Sobe os containers com build
             docker compose up -d --build
 
-            # Roda comandos Laravel dentro do container
+            # Aguarda o banco subir
+            sleep 15
+
+            # Comandos Laravel
             docker compose exec app php artisan migrate --force
             docker compose exec app php artisan optimize:clear
             docker compose exec app php artisan config:cache
             docker compose exec app php artisan route:cache
             docker compose exec app php artisan view:cache
 
-            # Corrige permissões
+            # Corrige permissões finais
             docker compose exec app chown -R www-data:www-data storage bootstrap/cache
