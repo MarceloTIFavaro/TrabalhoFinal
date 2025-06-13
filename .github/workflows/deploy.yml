@@ -24,8 +24,7 @@ jobs:
 
             # Clona o repositório se a pasta TrabalhoFinal não existir
             if [ ! -d TrabalhoFinal ]; then
-              git clone git@github.com:seu-usuario/seu-repo.git TrabalhoFinal
-            fi
+              git clone https://github.com/MarceloTIFavaro/TrabalhoFinal.git
 
             cd TrabalhoFinal
 
