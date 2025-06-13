@@ -1,17 +1,23 @@
 name: Deploy to Production
 
+# Gatilho: Roda este workflow toda vez que houver um push no branch 'main'
 on:
   push:
     branches: [ "main" ]
 
+# Tarefas que serão executadas
 jobs:
   deploy:
+    # O tipo de máquina virtual que o nosso "robô" vai usar
     runs-on: ubuntu-latest
 
+    # Os passos da receita
     steps:
+      # 1. Pega o código mais recente do seu repositório
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. Conecta no seu servidor via SSH e executa os comandos de deploy
       - name: Deploy to Server
         uses: appleboy/ssh-action@master
         with:
@@ -20,38 +26,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
           script: |
-            cd /home/ubuntu
-
-            # Clona o repositório se a pasta TrabalhoFinal não existir
-            if [ ! -d TrabalhoFinal ]; then
-              git clone https://github.com/MarceloTIFavaro/TrabalhoFinal.git
-
-            cd TrabalhoFinal
-
-            # Marca o repo como seguro para o git (evita erro)
-            git config --global --add safe.directory /home/ubuntu/TrabalhoFinal
-
-            # Puxa as últimas mudanças
+            # Navega para a pasta do projeto
+            cd /home/ubuntu/Trabalho_Final_DW2/
+            
+            # Puxa as atualizações do repositório
             git pull
-
-            # Cria o arquivo .env baseado no secret do GitHub
-            echo "${{ secrets.LARAVEL_ENV }}" | tee .env > /dev/null
-
-            # Para os containers (se estiverem rodando)
+            
+            # Para os contêineres atuais para evitar conflitos
             docker compose down
-
-            # Sobe os containers com build e dettach
+            
+            # Sobe os contêineres, reconstruindo a imagem se necessário
             docker compose up -d --build
-
-            # Espera o banco subir
-            sleep 15
-
-            # Roda os comandos Laravel
+            
+            # Roda os comandos do Laravel para finalizar
             docker compose exec app php artisan migrate --force
             docker compose exec app php artisan optimize:clear
             docker compose exec app php artisan config:cache
             docker compose exec app php artisan route:cache
             docker compose exec app php artisan view:cache
-
-            # Ajusta permissões
+            
+            # Garante as permissões corretas
             docker compose exec app chown -R www-data:www-data storage bootstrap/cache
