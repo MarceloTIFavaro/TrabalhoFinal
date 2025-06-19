@@ -27,7 +27,7 @@ jobs:
           port: 22
           script: |
             # Navega para a pasta do projeto
-            cd /home/ubuntu/Trabalho_Final_DW2/
+            cd /home/ubuntu/TrabalhoFinal/
             
             # Puxa as atualizações do repositório
             git pull
